@@ -1,0 +1,51 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="row">
+  {% if basic: %}
+  <div class="col-lg-6">
+    <h1>{{ basic['location'] }}</h1>
+    <p class="lead">
+      <p>{{ basic['datetime'] }}</p>
+      <strong>{{ basic['description'] }}</strong>
+      <p>
+        <span><img src="{{ basic['icon']}}" alt="current icon"></span>
+        <span class="important">{{ basic['temperature'] }}</span>
+      </p>
+    </p>
+  </div>
+  {% endif %}
+  <div class="col-lg-6">
+    <table class="table table-condensed table-striped">
+      {% if detail: %}
+      {% for key, value in detail.items(): %}
+      <tr>
+         <th>{{ key }}</th>
+         <td>{{ value }}</td>
+      </tr>
+      {% endfor %}
+      {% endif %}
+    </table>  
+  </div>
+  <div>
+  {% if daily: %}
+  <table class="table">
+    <tr>
+      {% for key in daily: %}
+      {% if key != 'location': %}
+      <td>
+        <div>{{ key }}</div>
+        <div><img src="{{ daily[key]['icon']}}" alt="daily icon"></div>
+        <div>
+          {{ daily[key]['temperature_min'] }}
+        </div>
+        <div>
+          {{ daily[key]['temperature_max'] }}
+        </div>
+      </td>
+      {% endif %}
+      {% endfor %}
+    </tr>
+  </table>
+  {% endif %}
+</div>
+{% endblock %}

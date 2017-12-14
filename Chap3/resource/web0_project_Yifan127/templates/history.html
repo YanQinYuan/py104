@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+{% block content %}
+{% if history: %}
+{% for location in history: %}
+<div class="row">
+  <div class="col-lg-6">
+    <h1>{{ history[location]['basic']['location'] }}</h1>
+    <p class="lead">
+      <p>{{ history[location]['basic']['datetime'] }}</p>
+      <strong>{{ history[location]['basic']['description'] }}</strong>
+      <p>
+        <span><img src="{{ history[location]['basic']['icon']}}" alt="current icon"></span>
+        <span class="important">{{ history[location]['basic']['temperature'] }}</span>
+      </p>
+    </p>
+  </div>
+  <div class="col-lg-6">
+    <table class="table table-condensed table-striped">
+      {% for key, value in history[location]['detail'].items(): %}
+      <tr>
+         <th>{{ key }}</th>
+         <td>{{ value }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}
