@@ -1,6 +1,9 @@
-# encoding='utf-8'
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+#for windows
+
 weather_info = {}
-with open('weather_info.txt',encoding = 'utf-8') as f:
+with open('weather_info.txt'，,encoding = 'utf-8') as f:
     for i in f:
         data = i.split(',')
         city = data[0]
