@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #for mac
 
 weather_info = {}
 with open('weather_info.txt','r',encoding = 'utf-8') as f:
-    for i in f.readlines:
+    for i in f.readlines():
         data = i.split(',')
         weather_info.update({data[0]:data[-1]})
         # city = data[0]
@@ -16,7 +17,6 @@ def pri_his(history):
         print(i)
 while True:
     input_info = input("请输入城市：")
-    print('what')
     if input_info in ["help"]:
         print("""
         输入城市名，返回该城市天气;
@@ -24,10 +24,10 @@ while True:
         输入help将得到帮助信息。
         输入history将展示历史查询信息""")
     elif input_info in weather_info.keys():
-        print("{}的股价是{}".format(input_info,weather_info[input_info]))
-        # history_info = input_info + ":" + weather_info[input_info]
-        # print(history_info)
-        # history.append(history_info)
+        print("{}的天气是{}".format(input_info,weather_info[input_info]))
+        history_info = input_info + ":" + weather_info[input_info]
+        print(history_info)
+        history.append(history_info)
 
     elif input_info in ["quit"]:
         print("退出查询")
@@ -37,9 +37,3 @@ while True:
         print(history)
     elif input_info in ["shenzhen"]:
         print('wrong')
-# the other way:
-user_input = input("请输入需要查询的城市天气：")
-if weather_info.get(user_input):
-    print("{}：{}".format(user_input,weather_info[user_input]))
-else:
-    print("没有「{}」的天气信息".format(user_input))

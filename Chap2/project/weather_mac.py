@@ -22,3 +22,5 @@ while True:
         print(history)
     elif input_info in ["shenzhen"]:
         print('wrong')
+    else:
+        

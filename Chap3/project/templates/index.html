@@ -2,25 +2,33 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <title>What's the weahter?</title>
 </head>
 <body background="background.jpg">
-    <h1>What 's the weather?</h1>
-    <!-- <h2>Well,let me show you</h2>
-    <h3 style="background-color:black">Click here</h3>
-    <p>This is a paragraph.</p>
-    <p>nowhere said :<q>write,and I live.</q></p>
-    <a href="http://yangqinyuan.cn">My Blog</a> -->
-    <!-- <img src="https://avatars0.githubusercontent.com/u/22274131?s=460&v=4" width="133" height="142" /> -->
-    <from action='weather_ch2.py' >
+<style type="text/css">
+    a {
 
-        <div style="width: 664px;">
-        <div class="">
+    }
+    .input-city{
 
-        </div>
-    <!-- <from action='weather_ch2.py' > -->
-    city:<br>
-        <input type="text" name="firstname" value="beijing">
-        <input type="submit" value="Submit">
+    }
+    .submit-city{
+
+    }
+    .btn{
+
+    }
+</style>
+<div>
+    <h1>What's the weahter?</h1>
+    <form>
+        <input class="input-city" name="city_query" placeholder="please input city" />
+        <input class="btn btn-query"type="submit" value="query" />
+        <a class="btn btn-history" href="">history</a>
+        <a class="btn btn-helo" href="">help</a>
     </form>
+
+    {{ query_result }}
+</div>
 </body>
 </html>

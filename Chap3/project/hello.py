@@ -1,8 +1,14 @@
-from flask import Flask,url_for,render_template
+from flask import Flask,url_for, render_template, request
+from weatherquery import get_weather
 app = Flask(__name__)
 @app.route('/')
 def index():
-    return render_template('index.html')
+	city_query = request.args.get('city_query','')
+	print(city_query)
+	query_result = get_weather(city_query)
+	print(query_result)
+    return render_template('index.html',query_result)
+
 @app.route('/user')
 def user():
     return render_template('user.html')
