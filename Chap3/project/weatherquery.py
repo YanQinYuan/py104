@@ -27,9 +27,7 @@ def get_weather(location):
 		high0 = daily[0].get('high')
 		wind = daily[0].get('wind_direction')
 		# today = "\n今天天气：\n"+location+"白天：{}\n夜晚：{}\n气温：{}～{}\n风向：{}".format(day0,night0,low0,high0,wind)
-		today = f"""
-			{location}今日天气：白天{day0}，夜晚{night0}，气温：{low0}~{high0}
-		"""
+		today = f"""今日：白天{day0}，夜晚{night0}，气温：{low0}~{high0}|"""
 		# 明天天气
 		day1 = daily[1].get('text_day')# 今天天气情况,「0」表示今天
 		night1 = daily[1].get('text_night')
@@ -37,9 +35,7 @@ def get_weather(location):
 		high1 = daily[1].get('high')
 		wind = daily[1].get('wind_direction')
 		# tomorrow = "\n明天天气预报：\n"+location+"白天：{}\n夜晚：{}\n气温：{}～{}\n风向：{}".format(day1,night1,low1,high1,wind)
-		tomorrow = f"""
-			{location}明天天气：白天{day1}，夜晚{night1}，气温：{low1}~{high1}
-		"""
+		tomorrow = f"""明天：白天{day1}，夜晚{night1}，气温：{low1}~{high1}|"""
 		# 后日天气
 		day2 = daily[2].get('text_day')
 		night2 = daily[2].get('text_night')
@@ -47,10 +43,11 @@ def get_weather(location):
 		high2 = daily[2].get('high')
 		wind = daily[2].get('wind_direction')
 		# after_tom = "\n后天天气预报：\n"+location+"白天：{}\n夜晚：{}\n气温：{}～{}\n风向：{}".format(day2,night2,low2,high2,wind)
-		after_tom = f"""
-			{location}后天天气: 白天{day2}，夜晚{night2}，气温：{low2}~{high2}
-		"""
+		after_tom = f"""后天：白天{day2}，夜晚{night2}，气温：{low2}~{high2}"""
 		query_result = today + tomorrow + after_tom
 		return query_result
 	else:
-		print('请输入正确的城市名。')
+		query_result = f"""
+			查询不到「{location}」的天气信息，请输入正确的城市名称。
+		"""
+		return query_result

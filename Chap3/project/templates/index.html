@@ -2,33 +2,71 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>What's the weahter?</title>
+    <!-- <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
+    integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy"
+    crossorigin="anonymous"> -->
+    <title>Weather?</title>
 </head>
 <body background="background.jpg">
 <style type="text/css">
+    h1 {color: rgba(47, 107, 63, 0.78);
+        font-size: 65px;
+        text-align: center;}
     a {
+        position: relative;
+        left: 600px;
+        right: 30px;
+        text-decoration: none;
+        text-align: center;
+    }
+    p {
+        color: rgba(162, 127, 71, 0.78);
+        font-size: 22px;
+        text-align: center;
+    }
+    input {
+        color: rgba(47, 107, 63, 0.78);
+        text-align: center;
+        }
+
+    .btn-query {
+        position: relative;
+        left: 420px;
+        right: 30px;
+        font-size: 40px;
 
     }
-    .input-city{
-
+    .submit-city {
+        position:absolute;
+        left:100px;
+        top:150px;
     }
-    .submit-city{
-
-    }
-    .btn{
-
-    }
+    footer {
+    /* background-color:black; */
+    color: black;
+    clear:both;
+    text-align:center;
+    padding:5px;
+}
 </style>
 <div>
-    <h1>What's the weahter?</h1>
+    <h1>How's the weather?</h1>
     <form>
-        <input class="input-city" name="city_query" placeholder="please input city" />
-        <input class="btn btn-query"type="submit" value="query" />
-        <a class="btn btn-history" href="">history</a>
-        <a class="btn btn-helo" href="">help</a>
+        <input class="btn-query" name="city_query" placeholder="" />
+        <input class="btn-query" type="submit" value="query" />
+        <br>
+        <!-- <a href="history" >history</a>
+        <a href="help" >help</a> -->
     </form>
 
-    {{ query_result }}
+    <p>{{ city_query }}</p>
+    <p>{{ query_result00 }}</p>
+    <p>{{ query_result01 }}</p>
+    <p>{{ query_result02 }}</p>
 </div>
+<footer href="history">history</footer>
+
 </body>
 </html>
