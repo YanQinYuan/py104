@@ -1,19 +1,25 @@
 from flask import Flask,url_for, render_template, request
 from weatherquery import get_weather
 app = Flask(__name__)
-history = {}
+history = []
+q_result = {}
 @app.route('/')
 def index():
-    q_result = {}
     city_query = request.args.get('city_query','')
     if city_query:
         # print(city_query)
         query_result = get_weather(city_query)
-        history = q_result
-        print(query_result)
+        history.append(q_result)
+        print(city_query)
         query_result00 = ''
         query_result01 = ''
         query_result02 = ''
+        # if query_result == '查询不到该城市天气信息，请输入正确的城市名称':
+        # 	q_result.update({
+        # 		'query_result' : query_result,
+        # 		'city_query' : city_query
+        # 		})
+        # else:
         wea_data = query_result.split("|")
         print(wea_data)
         query_result00 = wea_data[0]
@@ -36,5 +42,7 @@ def show_help():
 
 @app.route('/history')
 def show_history():
-    print(history)
-    return render_template('history.html', **history)
+    q_result.update({
+    	'history':history
+    	})
+    return render_template('index.html', **q_result)

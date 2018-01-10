@@ -47,7 +47,5 @@ def get_weather(location):
 		query_result = today + tomorrow + after_tom
 		return query_result
 	else:
-		query_result = f"""
-			查询不到「{location}」的天气信息，请输入正确的城市名称。
-		"""
+		query_result = '查询不到该城市天气信息，请输入正确的城市名称'
 		return query_result
