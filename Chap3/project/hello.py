@@ -9,40 +9,23 @@ def index():
     if city_query:
         # print(city_query)
         query_result = get_weather(city_query)
-        history.append(q_result)
-        print(city_query)
-        query_result00 = ''
-        query_result01 = ''
-        query_result02 = ''
-        # if query_result == '查询不到该城市天气信息，请输入正确的城市名称':
-        # 	q_result.update({
-        # 		'query_result' : query_result,
-        # 		'city_query' : city_query
-        # 		})
-        # else:
-        wea_data = query_result.split("|")
-        print(wea_data)
-        query_result00 = wea_data[0]
-        query_result01 = wea_data[1]
-        query_result02 = wea_data[2]
-        print(query_result00)
+        if city_query not in history:
+            history.append(city_query)
+            history.append(query_result)
         q_result.update({
-            "query_result00" : query_result00,
-            "query_result01" : query_result01,
-            "query_result02" : query_result02,
+            "query_result" : query_result,
             "city_query" : city_query
         })
-        # print(q_result)
         return render_template('index.html', **q_result)
     else:
         return render_template('index.html')
-@app.route('/help')
+@app.route('/help/')
 def show_help():
-    return render_template('help.html')
+    help_str = """
+    <p>help yourself</p>
+    """
+    return render_template('index.html',help = help_str)
 
-@app.route('/history')
+@app.route('/history/')
 def show_history():
-    q_result.update({
-    	'history':history
-    	})
-    return render_template('index.html', **q_result)
+    return render_template('index.html', history = history)

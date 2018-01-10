@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html style="background-color: beige;">
 <head>
     <meta charset="utf-8">
     <!-- <link
@@ -9,17 +9,17 @@
     crossorigin="anonymous"> -->
     <title>Weather?</title>
 </head>
-<body background="background.jpg">
+<body>
 <style type="text/css">
     h1 {color: rgba(47, 107, 63, 0.78);
         font-size: 65px;
         text-align: center;}
     a {
-        position: relative;
-        left: 600px;
-        right: 30px;
+        position: inherit;
         text-decoration: none;
-        text-align: center;
+        text-align: left;
+        color: #a9bfca;
+        font-size: larger;
     }
     .result {
         color: rgba(162, 127, 71, 0.78);
@@ -45,11 +45,17 @@
     }
     footer {
     /* background-color:black; */
-    color: black;
     clear:both;
-    text-align:center;
-    padding:5px;
+    text-align: center;
 }
+    #Footer {
+　   height: 100px;
+　   position: relative;
+　   margin-top: -100px;
+}
+    #main {
+        padding-bottom: 100px;
+    }
 </style>
 <div>
     <h1>How's the weather?</h1>
@@ -57,21 +63,29 @@
         <input class="btn-query" name="city_query" placeholder="" />
         <input class="btn-query" type="submit" value="query" />
         <br>
-        <a href="/history/">history</a>
         <!-- <a href="history" >history</a>
         <a href="help" >help</a> -->
     </form>
-</div>
+</div id="main">
     <div class='result'>
     <p>{{ city_query }}</p>
-    {% if query_result00 %}
-        {{ query_result00 }}
-        {{ query_result01 }}
-        {{ query_result02 }}
-    {% elif history %}{{ history }}
+    {% if query_result %}
+        {% for q in query_result.split("|") %}
+            {{ q }}<br>
+        {% endfor %}
+    {% elif history %}
+        {% for his in history %}
+            <p>历史查询：{{ his }}</p>
+        {% endfor %}
+    {% elif help %}{{ help|safe }}
     {% else %}{% endif %}
     </div>
-
-
+<div>
+    <footer>
+    <a class="" href="/history/">history</a>
+    <a class="" href="/help/">help</a>
+</footer>
+</div>
+<!-- <div>{% block content %}{% endblock %}</div> -->
 </body>
 </html>
