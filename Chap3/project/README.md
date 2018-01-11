@@ -11,3 +11,11 @@
 - css,使用网页模板渲染
 - database
 - bootstrap
+
+## 后续 1/10
+### 使用 jinja2
+### 使用 bootstrap 的样式美化
+### 使用 flask 的蓝图 blueprint
+
+参考
+https://spacewander.github.io/explore-flask-zh/4-organizing_your_project.html
