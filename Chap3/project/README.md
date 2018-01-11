@@ -16,6 +16,7 @@
 ### 使用 jinja2
 ### 使用 bootstrap 的样式美化
 ### 使用 flask 的蓝图 blueprint
+### 使用 Flask-WTF 管理表单
 
 参考
 https://spacewander.github.io/explore-flask-zh/4-organizing_your_project.html

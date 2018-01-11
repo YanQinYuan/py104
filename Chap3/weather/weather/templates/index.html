@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html style="background-color: beige;">
+  <head>
+    {% block head %}
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/styles.css">
+    <meta name="author" content="nowhere">
+    <meta name="description" content="current weather and 7 days forecast">
+    <link rel="icon" href="../static/sun.ico">
+    <link rel="stylesheet" href="../static/bootstrap.min.css">
+    <title>{% block title %}{% endblock %}Weather?</title>
+    {% endblock %}
+  </head>
+
+  <body>
+    <div class="container">
+        <div class="header clearfix">
+            <nav>
+                <ul>
+                    <li role="presentation" class="active"><a href="#">Home</a></li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">Weather Report</h3>
+        </div>
+
+        <div class="jumboron">
+            <h2>current weather</h2>
+                <form class="form-horizontal" action="/" method="post">
+                    <div class="form-group col-xs-10">
+                        <input type="text" name="location" value="form-control" autofocus placeholder="shenzhen">
+                    </div>
+                    <div class="form-group">
+                        <input type="radio" name="unit" value="metric" checked>&degC
+                    </div>
+                    <div class="form-group">
+                        <input class="btn btn-primary" type="submit" name="submit" value="Search">
+                        <input class="btn btn-primary" type="submit" name="submit" value="history">
+                        <input class="btn btn-primary" type="submit" name="submit" value="Help" formmethod="get">
+                    </div>
+                </form>
+            </div>
+            <div>{% block content %}{% endblock %}</div>
+            <footer class="footer">
+                {% block footer%}
+                <p>&copy; 2017 Company, Inc. Weather Report Web v0.1</p>
+                {% endblock %}
+            </footer>
+      </div>
+    </body>
+</html>
