@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html style="background-color: beige;">
+<head>
+    {% block head %}
+    <meta charset="utf-8">
+    <!-- <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
+    integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy"
+    crossorigin="anonymous"> -->
+    <title>{% block title %}{% endblock %}Weather?</title>
+    {% endblock %}
+</head>
+<body>
+<style type="text/css">
+    h1 {color: rgba(47, 107, 63, 0.78);
+        font-size: 65px;
+        text-align: center;}
+    a {
+        position: inherit;
+        text-decoration: none;
+        text-align: left;
+        color: #a9bfca;
+        font-size: larger;
+    }
+    .result {
+        color: rgba(162, 127, 71, 0.78);
+        font-size: 22px;
+        text-align: center;
+    }
+    input {
+        color: rgba(47, 107, 63, 0.78);
+        text-align: center;
+        }
+
+    .btn-query {
+        position: relative;
+        left: 420px;
+        right: 30px;
+        font-size: 40px;
+
+    }
+    .submit-city {
+        position:absolute;
+        left:100px;
+        top:150px;
+    }
+    footer {
+    /* background-color:black; */
+    clear:both;
+    text-align: center;
+}
+    #Footer {
+　   height: 100px;
+　   position: relative;
+　   margin-top: -100px;
+}
+    #main {
+        padding-bottom: 100px;}
+
+    .btn-query-fix {
+        position: relative;
+        left: 420px;
+        right: 30px;
+        font-size: 20px;
+    }
+</style>
+<div>
+    <h1>How's the weather?</h1>
+    <form>
+        <input class="btn-query" name="city_query" placeholder="" />
+        <input class="btn-query" type="submit" value="query" />
+        <br>
+        <!-- <a href="history" >history</a>
+        <a href="help" >help</a> -->
+    </form>
+    <form>
+        <input class="btn-query" name="fix_data" type="submit" value="" />
+    </form>
+</div id="main">
+    <div class='result'>
+    {% block content %}
+    <p>{{ city_query }}</p>
+    {% if query_result %}
+        {% for q in query_result.split("|") %}
+            {{ q }}<br>
+        {% endfor %}
+    {% elif history %}
+        {% for his in history %}
+            <p>历史查询：{{ his }}</p>
+        {% endfor %}
+    {% elif help %}{{ help|safe }}
+    {% else %}{% endif %}
+    {% endblock %}
+    </div>
+<div>
+    <footer>
+    <a class="" href="/history/">history</a>
+    <a class="" href="/help/">help</a>
+    </footer>
+</div>
+</body>
+</html>
