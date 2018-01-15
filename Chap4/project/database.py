@@ -7,10 +7,16 @@
 # 用户输入城市名，输出改城市天气信息，若没有，则从api里搜索 y
 # 将用户查询信息存入数据库y
 # 用户点击历史按钮，从数据库获取信息显示y
-# 用户手动更新数据库
-# 数据库定时更新
+# 用户手动更新数据库y
+# 数据库定时更新y
 
 import sqlite3 as ite
+def create_users():
+	conn = ite.connect('weather.db')
+	with conn:
+		cur = conn.cursor()
+		cur.execute("create table users(username char(80), password char(120))")
+
 def create_table():
 	conn = ite.connect('weather.db')
 	with conn:
@@ -47,16 +53,39 @@ def update_weather(location, weather):
 	with conn:
 		cur = conn.cursor()
 		cur.execute('UPDATE weather SET weather=? where city=?',(weather, location))
-		conn.commit()
+		# conn.commit()
 		cur.execute('SELECT * from weather where city=:location',{"location": location})
 		update_data = cur.fetchall()
 	return update_data
+def isExisted(username, password):
+	conn = ite.connect('weather.db')
+	with conn:
+		cur = conn.cursor()
+		cur.execute('SELECT * from users where username=? and password=?',(username, password))
+		username = cur.fetchall()
+		if len(username) == 0:
+			return False
+		else:
+			return True
+def add_user(username, password):
+	conn = ite.connect('weather.db')
+	with conn:
+		cur = conn.cursor()
+		cur.execute('INSERT into users VALUES(?,?)',(username, password))
 
+def register_check(username):
+	conn = ite.connect('weather.db')
+	with conn:
+		cur = conn.cursor()
+		cur.execute("SELECT * from users where username=?", (username,))
+		result = cur.fetchall()
+		if len(result) == 0:
+			return False
+		else:
+			return True
 
-
-if __name__ == '__main__':
+# if __name__ == '__main__':
 	# insert_data("1月13号","天津","多云","-4")
 	# get_history()
 	# update_weather("天津","没有草原")
-	create_table()
-
+	# create_users()

@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+{% block register %}
+<h1>新用户注册</h1>
+{% if message %} {{ message }} {% endif %}
+<form align="center" action="/register" method="post">
+    <!-- input type="text" name="username" placeholder="username" /-->
+    <!--input type="password" name="password" placeholder="password" /-->
+    Username:{{ form.username }}
+    <br />
+    Password:{{ form.password }}
+    <br />
+    <input type="submit" value="Submit" />
+    <input type="reset" value="Reset" />
+</form>
+{% endblock %}
