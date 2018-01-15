@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html style="background-color: beige;">
 <head>
-    {% block head %}
     <meta charset="utf-8">
+    {% block head %}
     <!-- <link
     rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
@@ -67,30 +67,28 @@
 </style>
 <div>
     <h1>How's the weather?</h1>
-    <form>
-        <input class="btn-query" name="city_query" placeholder="" />
-        <input class="btn-query" type="submit" value="query" />
-        <br>
-        <!-- <a href="history" >history</a>
-        <a href="help" >help</a> -->
-    </form>
-    <form>
-        <input class="btn-query" name="fix_data" type="submit" value="" />
+    <form align="center" action="/user_request" method="get">
+        <input type="text" name="city" placeholder="请在此输入你要查询的城市名，如：深圳">
+        <input type="submit" name="query" value="查询">
+        <input type="submit" name="history" value="历史">
+        <input type="submit" name="help" value="帮助">
+        <input type="submit" name="update" value="更新">
     </form>
 </div id="main">
     <div class='result'>
     {% block content %}
     <p>{{ city_query }}</p>
-    {% if query_result %}
-        {% for q in query_result.split("|") %}
-            {{ q }}<br>
-        {% endfor %}
+    {% if weather_str %}
+        <p>{{ weather_str }}</p>
     {% elif history %}
         {% for his in history %}
-            <p>历史查询：{{ his }}</p>
+            <p>{{ his }}</p>
         {% endfor %}
-    {% elif help %}{{ help|safe }}
-    {% else %}{% endif %}
+    {% elif help %}
+        <p>help yourself</p>
+    {% elif update_data %}
+        <p>{{ update_data }}</p>
+    {% endif %}
     {% endblock %}
     </div>
 <div>
