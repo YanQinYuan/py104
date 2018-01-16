@@ -1,12 +1,81 @@
 # -*- coding: utf-8 -*-
 from flask import Flask,url_for, render_template, request, redirect
 from weatherquery import get_weather
-# from flask_sqlalchemy import *
 from database import get_city_weather, insert_data, update_weather,get_history, isExisted, add_user,register_check
 from wtforms import Form, TextField,PasswordField,validators
-
+import os
+import sqlite3 as ite
+from flask import session, g, abort, flash
+import hashlib
 # from datetime import datetime
 app = Flask(__name__)
+app.config.from_object(__name__) # load config from this file , flaskr.py
+
+# Load default config and override config from an environment variable
+app.config.update(dict(
+    DATABASE=os.path.join(app.root_path, 'weather.db'),
+    SECRET_KEY='e35d7f4348184ed6a9aa15adfdb8c6f0' # uuid.uuid4.hex
+))
+app.config.from_envvar('FLASKR_SETTINGS', silent=True)
+
+def connect_db():
+    """Connects to the specific database."""
+    rv = sqlite3.connect(app.config['DATABASE'])
+    rv.row_factory = sqlite3.Row
+    return rv
+def get_db():
+    """Opens a new database connection if there is none yet for the
+    current application context.
+    """
+    if not hasattr(g, 'sqlite_db'):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
+print(get_db)
+@app.teardown_appcontext
+def close_db(error):
+    """Closes the database again at the end of the request."""
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
+
+def init_db():
+    db = get_db()
+    with app.open_resource('schema.sql', mode='r') as f:
+        db.cursor().executescript(f.read())
+    db.commit()
+
+@app.cli.command('initdb')
+def initdb_command():
+    """Initializes the database."""
+    init_db()
+    print('Initialized the database.')
+def encode_password(password):
+    return hashlib.md5(('slat:weatherquery' + password).encode()).hexdigest()
+
+def create_user(username, password):
+    raw_password = encode_password(password) 
+    conn = ite.connect("weather.db")
+    with conn:
+        cur = conn.cursor()
+        sql_create = """INSERT INTO users (username, password) values("{}", "{}")
+                     """.format(username, raw_password)
+        cur.execute(sql_create)
+
+@app.cli.command('initadmin')
+def initadmin_command():
+    """Initializes the database."""
+    create_user("admin", "123456")
+    print('Initialized the admin.')
+def query_user(username):
+    conn = ite.connect("weather.db")
+    with conn:
+        cur = conn.cursor()
+        sql_query = """SELECT * FROM users where username='{}' """.format(username)
+        user = cur.execute(sql_query).fetchone()
+        return user
+@app.cli.command('queryadmin')
+def queryadmin_command():
+    """query_admin."""
+    print(dict(query_user('admin')))
 
 class LoginForm(Form):
     username = TextField("username",[validators.Required()])
