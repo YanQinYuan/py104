@@ -1,18 +1,14 @@
 <!DOCTYPE html>
-<html style="background-color: beige;">
+<html>
 <head>
     <meta charset="utf-8">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     {% block head %}
-    <!-- <link
-    rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
-    integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy"
-    crossorigin="anonymous"> -->
     <title>{% block title %}{% endblock %}Weather?</title>
     {% endblock %}
 </head>
 <body>
-<style type="text/css">
+    <style media="screen">
     h1 {color: rgba(47, 107, 63, 0.78);
         font-size: 65px;
         text-align: center;}
@@ -28,10 +24,6 @@
         font-size: 22px;
         text-align: center;
     }
-    input {
-        color: rgba(47, 107, 63, 0.78);
-        text-align: center;
-        }
 
     .btn-query {
         position: relative;
@@ -46,25 +38,15 @@
         top:150px;
     }
     footer {
-    /* background-color:black; */
     clear:both;
     text-align: center;
-}
-    #Footer {
-　   height: 100px;
-　   position: relative;
-　   margin-top: -100px;
-}
-    #main {
-        padding-bottom: 100px;}
-
-    .btn-query-fix {
-        position: relative;
-        left: 420px;
-        right: 30px;
-        font-size: 20px;
     }
-</style>
+    input{
+    width: 30%;
+    padding: 15px;
+    font-size: 16px;
+    }
+    </style>
 <div>
     {% block register %}
     <h1>How's the weather?</h1>
@@ -93,11 +75,11 @@
     {% endif %}
     {% endblock %}
     </div>
-<div>
+<!-- <div>
     <footer>
     <a class="" href="/history/">history</a>
     <a class="" href="/help/">help</a>
     </footer>
-</div>
+</div> -->
 </body>
 </html>

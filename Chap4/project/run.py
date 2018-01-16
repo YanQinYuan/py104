@@ -1,17 +1,153 @@
 # -*- coding: utf-8 -*-
 from flask import Flask,url_for, render_template, request, redirect
 from weatherquery import get_weather
-# from flask_sqlalchemy import *
 from database import get_city_weather, insert_data, update_weather,get_history, isExisted, add_user,register_check
 from wtforms import Form, TextField,PasswordField,validators
-
+import os
+import sqlite3
+from flask import session, g, abort, flash, escape
+import hashlib
 # from datetime import datetime
 app = Flask(__name__)
+app.config.from_object(__name__) # load config from this file , flaskr.py
 
-class LoginForm(Form):
-    username = TextField("username",[validators.Required()])
-    password = PasswordField("password",[validators.Required()])
+# Load default config and override config from an environment variable
+app.config.update(dict(
+    DATABASE=os.path.join(app.root_path, 'weather.db'),
+    SECRET_KEY='e35d7f4348184ed6a9aa15adfdb8c6f0' # uuid.uuid4.hex
+))
+app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
+def connect_db():
+    """Connects to the specific database."""
+    rv = sqlite3.connect(app.config['DATABASE'])
+    rv.row_factory = sqlite3.Row
+    return rv
+def get_db():
+    """Opens a new database connection if there is none yet for the
+    current application context.
+    """
+    if not hasattr(g, 'sqlite_db'):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
+# print(get_db)
+@app.teardown_appcontext
+def close_db(error):
+    """Closes the database again at the end of the request."""
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
+
+def init_db():
+    db = get_db()
+    with app.open_resource('schema.sql', mode='r') as f:
+        db.cursor().executescript(f.read())
+    db.commit()
+
+@app.cli.command('initdb')
+def initdb_command():
+    """Initializes the database."""
+    init_db()
+    print('Initialized the database.')
+def encode_password(password):
+    return hashlib.md5(('slat:weatherquery' + password).encode()).hexdigest()
+
+def create_user(username, password):
+    raw_password = encode_password(password)
+    conn = sqlite3.connect("weather.db")
+    with conn:
+        cur = conn.cursor()
+        sql_create = """INSERT INTO users (username, password) values("{}", "{}")
+                     """.format(username, raw_password)
+        cur.execute(sql_create)
+
+@app.cli.command('initadmin')
+def initadmin_command():
+    """Initializes the database."""
+    create_user("admin", "123456")
+    print('Initialized the admin.')
+def query_user(username):
+    conn = sqlite3.connect("weather.db")
+    with conn:
+        cur = conn.cursor()
+        sql_query = """SELECT * FROM users where username='{}' """.format(username)
+        user = cur.execute(sql_query).fetchone()
+        return user
+    print(user)
+@app.cli.command('queryadmin')
+def queryadmin_command():
+    """query_admin."""
+    print(dict(query_user('admin')))
+
+# add entry
+@app.route('/register/', methods=['GET', 'POST'])
+def user_register():
+    context = {}
+    error = None
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        re_password = request.form.get('re_password')
+        if not username:
+            error = '用户名不能为空'
+        elif not password:
+            error = '密码不能为空'
+        elif password != re_password:
+            error = '两次输入的密码不一致'
+        elif query_user(username):
+            error = '用户已存在'
+        if error is None:
+            create_user(username, password)
+            return redirect(url_for('index'))
+        else:
+            context.update({
+            'error':error,
+            'username':username
+            })
+    return render_template('register.html', **context)
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    error = None
+    context = {}
+    if request.method == "POST":
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if not username:
+            error = '请输入用户名'
+        else:
+            user = query_user(username)
+            if not user:
+                error = '用户不存在'
+            else:
+                user_password = user[-1]
+                if encode_password(password) != user_password:
+                    error = '用户名或密码错误'
+                else:
+                    session['login'] = True
+                    session['username'] = username
+                    return redirect(url_for('index'))
+        context.update({
+        'error':error
+        })
+    return render_template('login.html', **context)
+
+@app.route('/')
+def index():
+    if 'username' in session:
+        return render_template('index.html')
+    return 'You are not logged in'
+
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    return redirect(url_for('index'))
+
+# set the secret key.  keep this really secret:
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+# class LoginForm(Form):
+#     username = TextField("username",[validators.Required()])
+#     password = PasswordField("password",[validators.Required()])
+#
 @app.route("/register", methods=['GET','POST'])
 def register():
     myForm = LoginForm(request.form)
@@ -94,17 +230,17 @@ def process_request():
         update_data = update_weather(city, update)
         print(update_data,"2")
         return render_template('index.html', update_data=update_data)
+    return render_template('index.html')
+@app.route('/help/')
+def show_help():
+    help_str = """
+    <p>help yourself</p>
+    """
+    return render_template('index.html',help = help_str)
 
-# @app.route('/help/')
-# def show_help():
-#     help_str = """
-#     <p>help yourself</p>
-#     """
-#     return render_template('index.html',help = help_str)
-
-# @app.route('/history/')
-# def show_history():
-#     return render_template('index.html', history = history)
+@app.route('/history/')
+def show_history():
+    return render_template('index.html', history = history)
 
 # @app.route('/fix/')
 # def fix_data():
