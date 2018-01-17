@@ -10,7 +10,6 @@ import hashlib
 # from datetime import datetime
 app = Flask(__name__)
 app.config.from_object(__name__) # load config from this file , flaskr.py
-
 # Load default config and override config from an environment variable
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'weather.db'),
@@ -97,7 +96,7 @@ def user_register():
             error = '用户已存在'
         if error is None:
             create_user(username, password)
-            return redirect(url_for('index'))
+            return redirect(url_for('login'))
         else:
             context.update({
             'error':error,
@@ -123,27 +122,63 @@ def login():
                     error = '用户名或密码错误'
                 else:
                     session['login'] = True
-                    session['username'] = username
+                    session['user'] = username
                     return redirect(url_for('query'))
         context.update({
         'error':error
         })
     return render_template('login.html', **context)
 
-# @app.route('/')
-# def index():
-#     if 'username' in session:
-#         return render_template('query.html')
-#     return 'You are not logged in'
-
 @app.route('/logout')
 def logout():
     # remove the username from the session if it's there
-    session.pop('username', None)
+    session["login"] = False
     return redirect(url_for('login'))
 
 # set the secret key.  keep this really secret:
-app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+# app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
+@app.route('/', methods=['GET','POST'])
+def query():
+    city_query = request.args.get('city')
+    username = session.get('user')
+    if username:
+        if request.args.get('query')=="查询":
+            create_table()
+            try:
+                weather_str = get_city_weather(city_query)
+                print(weather_str + "database")
+                return render_template('index.html', weather_str=weather_str)
+            except TypeError:
+                day,location,weather,low,weather_str = get_weather(city_query)
+                print(weather_str + "api")
+                insert_data(day,location,weather,low)
+                return render_template('index.html', weather_str=weather_str)
+        elif request.args.get('history')=="历史":
+            history = get_history()
+            return render_template('index.html', history=history)
+        elif request.args.get('help')=="帮助":
+            help = "help"
+            return render_template("index.html",help=help)
+        elif request.args.get('update')=="更新":
+            city = city_query.split(' ')[0]
+            print(city + "1")
+            update = city_query.split(' ')[1]
+            print(city+"\n"+update)
+            update_data = update_weather(city, update)
+            print(update_data,"2")
+            return render_template('index.html', update_data=update_data)
+    return render_template('index.html')
+# @app.route('/help')
+# def show_help():
+#     help_str = """
+#     <p>help yourself</p>
+#     """
+#     return render_template('index.html',help = help_str)
+#
+# @app.route('/history')
+# def show_history():
+#     return render_template('query.html', history = history)
 # class LoginForm(Form):
 #     username = TextField("username",[validators.Required()])
 #     password = PasswordField("password",[validators.Required()])
@@ -190,62 +225,6 @@ app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 #             message = "Incompleted form! Login Failed!"
 #             return render_template('login.html', message=message, form=myForm)
 #     return render_template('login.html', form=myForm)
-@app.route('/')
-def query():
-    city_query = request.args.get('city')
-    # print(city_query)
-    # 开始计时。
-    # if time>5min:
-    # else:
-    # time1 = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    if city_query:
-        if request.args.get('query')=="查询":
-            create_table()
-            try:
-                weather_str = get_city_weather(city_query)
-                print(weather_str + "database")
-                # time0 = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-                # print(time0)
-                return render_template('query.html', weather_str=weather_str)
-            except TypeError:
-                try:
-                    day,location,weather,low,weather_str = get_weather(city_query)
-                    print(weather_str + "api")
-                    insert_data(day,location,weather,low)
-                    return render_template('query.html', weather_str=weather_str)
-                    # time0 = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-                    # print(time0)
-                except KeyError:
-                    return render_template('404.html')
-        elif request.args.get('history')=="历史":
-            history = get_history()
-            return render_template('query.html', history=history)
-        elif request.args.get('help')=="帮助":
-            help = "help"
-            return render_template("query.html",help=help)
-        elif request.args.get('update')=="更新": # 深圳 + 大雨
-            city = city_query.split(' ')[0]
-            print(city + "1")
-            update = city_query.split(' ')[1]
-            print(city+"\n"+update)
-            update_data = update_weather(city, update)
-            print(update_data,"2")
-            return render_template('query.html', update_data=update_data)
-    else:
-        error = '请输入城市名'
-        return render_template('query.html',error=error)
-    return render_template('query.html')
-@app.route('/help/')
-def show_help():
-    help_str = """
-    <p>help yourself</p>
-    """
-    return render_template('query.html',help = help_str)
-
-@app.route('/history/')
-def show_history():
-    return render_template('query.html', history = history)
-
 # @app.route('/fix/')
 # def fix_data():
 #     return render_template("fix.html")

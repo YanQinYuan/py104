@@ -10,9 +10,9 @@
 
 <div class="header">
     {% if session.login %}
-    <span>{{ session.username }}</span>
-    |
-    <a href="{{url_for('logout')}}">退出</a>
+        <span>{{ session.user }}</span>
+        |
+        <a href="{{url_for('logout')}}">退出</a>
     {% else %}
         <a href="{{ url_for('login') }}">登录</a>
         |
@@ -63,7 +63,7 @@
 <div>
     {% block register %}
     <h1>How's the weather?</h1>
-    <form align="center" action="/query" method="get">
+    <form align="center" action="/" method="get">
         <input type="text" name="city" placeholder="请在此输入你要查询的城市名，如：深圳">
         <input type="submit" name="query" value="查询">
         <input type="submit" name="history" value="历史">
