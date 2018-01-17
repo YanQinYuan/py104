@@ -7,6 +7,18 @@
     <title>{% block title %}{% endblock %}Weather?</title>
     {% endblock %}
 </head>
+
+<div class="header">
+    {% if session.login %}
+    <span>{{ session.username }}</span>
+    |
+    <a href="{{url_for('logout')}}">退出</a>
+    {% else %}
+        <a href="{{ url_for('login') }}">登录</a>
+        |
+        <a href="{{ url_for('register') }}">注册</a>
+    {% endif %}
+</div>
 <body>
     <style media="screen">
     h1 {color: rgba(47, 107, 63, 0.78);
@@ -41,16 +53,17 @@
     clear:both;
     text-align: center;
     }
-    input{
-    width: 30%;
-    padding: 15px;
+    form {
+    width: 100%;
+    padding: 20px;
     font-size: 16px;
+    text-align: center;
     }
     </style>
 <div>
     {% block register %}
     <h1>How's the weather?</h1>
-    <form align="center" action="/user_request" method="get">
+    <form align="center" action="/query" method="get">
         <input type="text" name="city" placeholder="请在此输入你要查询的城市名，如：深圳">
         <input type="submit" name="query" value="查询">
         <input type="submit" name="history" value="历史">
@@ -72,6 +85,8 @@
         <p>help yourself</p>
     {% elif update_data %}
         <p>{{ update_data }}</p>
+    {% elif error%}
+        <p>{{ error }}</p>
     {% endif %}
     {% endblock %}
     </div>
