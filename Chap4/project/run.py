@@ -170,7 +170,7 @@ def query():
     city_query = request.args.get('city')
     user = session.get('user')
     query_time = datetime.datetime.now()
-    if request.args.get('query')=="查询" and len(city_query) != 0:
+    if request.args.get('query')=="Query" and len(city_query) != 0:
         create_table()
         try:
             weather_str = get_city_weather(city_query)
@@ -190,7 +190,7 @@ def query():
                 except ValueError:
                     error = '无该城市天气信息'
                     return render_template('index.html', error=error)
-    elif request.args.get('history')=="历史":
+    elif request.args.get('history')=="History":
         try:
             user_id = user[0]
             username = user[1]
@@ -199,10 +199,10 @@ def query():
         except TypeError:
             error = '请先登录'
             return render_template('index.html', error=error)
-    elif request.args.get('help')=="帮助":
+    elif request.args.get('help')=="Help":
         help = "help"
         return render_template("index.html",help=help)
-    elif request.args.get('update')=="更新":
+    elif request.args.get('update')=="help":
         city = city_query.split(' ')[0]
         print(city + "1")
         update = city_query.split(' ')[1]
