@@ -10,13 +10,13 @@
 
 <div class="header">
     {% if session.login %}
-        <span>{{ session.user }}</span>
+        <span>{{ session.user[1] }}</span>
         |
         <a href="{{url_for('logout')}}">退出</a>
     {% else %}
         <a href="{{ url_for('login') }}">登录</a>
         |
-        <a href="{{ url_for('register') }}">注册</a>
+        <a href="{{ url_for('user_register') }}">注册</a>
     {% endif %}
 </div>
 <body>

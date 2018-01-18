@@ -7,6 +7,7 @@ import os
 import sqlite3
 from flask import session, g, abort, flash, escape
 import hashlib
+import datetime
 # from datetime import datetime
 app = Flask(__name__)
 app.config.from_object(__name__) # load config from this file , flaskr.py
@@ -76,7 +77,32 @@ def query_user(username):
 def queryadmin_command():
     """query_admin."""
     print(dict(query_user('admin')))
-
+def query_history(user_id):
+    conn = sqlite3.connect("weather.db")
+    with conn:
+        cur = conn.cursor()
+        sql_query = """SELECT result from history where user_id='{}'""".format(user_id)
+        cur.execute(sql_query)
+        history = cur.fetchall()
+        return history
+def isExisted_history(city):
+    conn = sqlite3.connect("weather.db")
+    with conn:
+        cur = conn.cursor()
+        sql_query = """SELECT result from history where city='{}'""".format(city)
+        cur.execute(sql_query)
+        history = cur.fetchall()
+        if len(history) == 0:
+            return False
+        else:
+            return True
+def insert_history(user_id, city, result, query_time):
+    conn = sqlite3.connect("weather.db")
+    with conn:
+        cur = conn.cursor()
+        sql_query = """INSERT INTO history (user_id, city, result, query_time)
+        values ('{}','{}','{}','{}')""".format(user_id, city, result, query_time)
+        cur.execute(sql_query)
 # add entry
 @app.route('/register/', methods=['GET', 'POST'])
 def user_register():
@@ -122,7 +148,7 @@ def login():
                     error = '用户名或密码错误'
                 else:
                     session['login'] = True
-                    session['user'] = username
+                    session['user'] = user
                     return redirect(url_for('query'))
         context.update({
         'error':error
@@ -133,6 +159,7 @@ def login():
 def logout():
     # remove the username from the session if it's there
     session["login"] = False
+    session["user"] = None
     return redirect(url_for('login'))
 
 # set the secret key.  keep this really secret:
@@ -141,34 +168,51 @@ def logout():
 @app.route('/', methods=['GET','POST'])
 def query():
     city_query = request.args.get('city')
-    username = session.get('user')
-    if username:
-        if request.args.get('query')=="查询":
-            create_table()
+    user = session.get('user')
+    query_time = datetime.datetime.now()
+    if request.args.get('query')=="查询" and len(city_query) != 0:
+        create_table()
+        try:
+            weather_str = get_city_weather(city_query)
+            print(weather_str + "database")
+            return render_template('index.html', weather_str=weather_str)
+        except TypeError:
             try:
-                weather_str = get_city_weather(city_query)
-                print(weather_str + "database")
+                day,location,weather,low,weather_str = get_weather(city_query)
+                user_id = user[0]
+                username = user[1]
+                insert_history(user_id, city_query, weather_str, query_time)
                 return render_template('index.html', weather_str=weather_str)
             except TypeError:
-                day,location,weather,low,weather_str = get_weather(city_query)
-                print(weather_str + "api")
-                insert_data(day,location,weather,low)
-                return render_template('index.html', weather_str=weather_str)
-        elif request.args.get('history')=="历史":
-            history = get_history()
+                try:
+                    day,location,weather,low,weather_str = get_weather(city_query)
+                    return render_template('index.html', weather_str=weather_str)
+                except ValueError:
+                    error = '无该城市天气信息'
+                    return render_template('index.html', error=error)
+    elif request.args.get('history')=="历史":
+        try:
+            user_id = user[0]
+            username = user[1]
+            history = query_history(user_id)
             return render_template('index.html', history=history)
-        elif request.args.get('help')=="帮助":
-            help = "help"
-            return render_template("index.html",help=help)
-        elif request.args.get('update')=="更新":
-            city = city_query.split(' ')[0]
-            print(city + "1")
-            update = city_query.split(' ')[1]
-            print(city+"\n"+update)
-            update_data = update_weather(city, update)
-            print(update_data,"2")
-            return render_template('index.html', update_data=update_data)
-    return render_template('index.html')
+        except TypeError:
+            error = '请先登录'
+            return render_template('index.html', error=error)
+    elif request.args.get('help')=="帮助":
+        help = "help"
+        return render_template("index.html",help=help)
+    elif request.args.get('update')=="更新":
+        city = city_query.split(' ')[0]
+        print(city + "1")
+        update = city_query.split(' ')[1]
+        print(city+"\n"+update)
+        update_data = update_weather(city, update)
+        print(update_data,"2")
+        return render_template('index.html', update_data=update_data)
+    else:
+        error = '请输入正确的城市名'
+    return render_template('index.html', error=error)
 # @app.route('/help')
 # def show_help():
 #     help_str = """
